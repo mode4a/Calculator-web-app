@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionController {
 
-    @ExceptionHandler
-    public ResponseEntity<StringWrapper> handleInvalidExpression(IllegalArgumentException ex){
+    @ExceptionHandler({IllegalArgumentException.class, NumberFormatException.class})
+    public ResponseEntity<StringWrapper> handleInvalidExpression(Exception ex){
         StringWrapper response = new StringWrapper();
         response.setData(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

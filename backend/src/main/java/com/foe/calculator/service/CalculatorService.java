@@ -23,7 +23,10 @@ public class CalculatorService {
         String expression ;
         try{
             expression = expressionObj.getData() ;
-        } catch (Exception e){
+        } catch (NullPointerException e){
+            throw new IllegalArgumentException("Can't get expression");
+        }
+        if( expression == null ){
             throw new IllegalArgumentException("Can't get expression");
         }
         if (!expression.isEmpty()) {
@@ -38,30 +41,18 @@ public class CalculatorService {
             if (index != -1) {
                 double num1 ;
                 double num2 ;
-                try {
-                    num1 = Double.parseDouble(expression.substring(0, index).trim());
-                    num2 = Double.parseDouble(expression.substring(index + 1).trim());
-                } catch (NumberFormatException ex){
-                    throw new IllegalArgumentException("invalid expression format");
-                }
+                num1 = Double.parseDouble(expression.substring(0, index).trim());
+                num2 = Double.parseDouble(expression.substring(index + 1).trim());
                 return calculate(num1, operator, num2);
             }
         }
         if(expression.startsWith("sqrt(")){
             double number ;
-            try{
-                number = Double.parseDouble(expression.substring(5).trim()) ;
-            } catch (NumberFormatException ex){
-                throw new IllegalArgumentException("invalid expression format");
-            }
+            number = Double.parseDouble(expression.substring(5).trim()) ;
             return Math.sqrt(number);
         }
-        try {
-            return Double.parseDouble(expression.trim()) ;
-        }
-        catch (NumberFormatException ex){
-            throw new IllegalArgumentException("invalid expression format");
-        }
+        return Double.parseDouble(expression.trim()) ;
+
     }
 
     private double calculate(double num1, char operator, double num2) {

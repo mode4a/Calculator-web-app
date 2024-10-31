@@ -40,6 +40,9 @@ const Calculator = () => {
     };
 
     const equalhandle = async () => {
+        if(haveOperator() === false){
+            return expression ;
+        }
         const res = await myeval() ;
         setResult(res);
         setExpression('');
@@ -89,6 +92,12 @@ const Calculator = () => {
         const res = await handleOperator('');
         setExpression(prev => res + value + prev) ;
 
+    }
+
+
+    const haveOperator = () => {
+        return (operators.some(op => expression.includes(op)) || 
+               specialOperators.some(op => expression.includes(op))) ;
     }
     
     
