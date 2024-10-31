@@ -68,9 +68,14 @@ const Calculator = () => {
         
         if(operators.some(op => expression.includes(op)) || expression.includes('sqrt(') ){
             const res = await myeval() ;
-            setExpression(res + value) ;
+            if( res === 'Error' ){
+                setResult(res) ;
+                setExpression('');
+            } else {
+                setExpression(res + value) ;
+            }
         } else {
-            if( expression === '' ){
+            if( expression === '' && result !== 'Error'){
                 setExpression(result + value) ;
             } else{
                 setExpression( prev => prev + value ) ;
