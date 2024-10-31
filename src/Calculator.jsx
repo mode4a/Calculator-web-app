@@ -52,7 +52,11 @@ const Calculator = () => {
     }
 
     const removelast = () => {
-        if (expression.endsWith("sqrt(")) {
+        
+        if(expression === ''){
+            setResult('') ;
+        }
+        else if (expression.endsWith("sqrt(")) {
           setExpression(expression.slice(0, -5));
         }
         else{
