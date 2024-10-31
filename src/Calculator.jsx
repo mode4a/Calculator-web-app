@@ -4,32 +4,23 @@ import './calculator.css';
 
 const Calculator = () => {
     const [expression, setExpression] = useState('');
-    const [result, setResult] = useState('0');
-    const operators = ['+', '-', '*', '/', '%', '^','^0.5','1/'];
+    const [result, setResult] = useState('');
+    const operators = ['+', '-', '*', '/', '%', '^'];
+    const specialOperators = ['sqrt(','1/'] ;
 
 
     const handleClick = async (value) => {
+
         if (value === 'C' || value === 'CE') {
-            setExpression('');
-            setResult('0');
+            clearExpression() ;
         } else if (value === '=') {
-            const res = await myeval() ;
-            setResult(res);
-            setExpression('');
+            await equalhandle() ;
         } else if (value === 'B') {
-            setExpression((prev) => prev.slice(0, -1));
+            removelast() ;
         } else if (operators.includes(value)) {
-            if (operators.some(op => expression.includes(op))){
-                    const res = await myeval() ;
-                    setResult(res); 
-                    setExpression(res + value);
-            } else{
-                if(expression === ''){
-                    setExpression(result + value);
-                } else {
-                    setExpression((prev) => prev + value);
-                }
-            }
+            handleOperator(value) ;
+        } else if(specialOperators.includes(value)) {
+            handleSpecialOperator(value);
         } else {
             setExpression((prev) => prev + value);
         }
@@ -41,13 +32,55 @@ const Calculator = () => {
             const response = await axios.post('http://localhost:8080/api/eval', {
                 data: expression
             });
-
             return response.data.data ;
 
         } catch (error) {
             return "Error" ;
         }
     };
+
+    const equalhandle = async () => {
+        const res = await myeval() ;
+        setResult(res);
+        setExpression('');
+        return res ;
+    }
+
+    const clearExpression = () => {
+        setExpression('');
+        setResult('');
+    }
+
+    const removelast = () => {
+        if (expression.endsWith("sqrt(")) {
+          setExpression(expression.slice(0, -5));
+        }
+        else{
+          setExpression(expression.slice(0, -1));
+        }
+      };
+
+    const handleOperator = async (value) => {
+        
+        if(operators.some(op => expression.includes(op)) || expression.includes('sqrt(') ){
+            const res = await myeval() ;
+            setExpression(res + value) ;
+        } else {
+            if( expression === '' ){
+                setExpression(result + value) ;
+            } else{
+                setExpression( prev => prev + value ) ;
+            }
+        }
+        return "" ;
+    }
+
+    const handleSpecialOperator = async (value) => {
+
+        const res = await handleOperator('');
+        setExpression(prev => res + value + prev) ;
+
+    }
     
     
 
@@ -63,7 +96,7 @@ const Calculator = () => {
                 <button onClick={() => handleClick('B')}>←</button>
                 <button onClick={() => handleClick('1/')}>1/x</button>
                 <button onClick={() => handleClick('^')}>x<sup>□</sup></button>
-                <button onClick={() => handleClick('^0.5')}>√x</button>
+                <button onClick={() => handleClick('sqrt(')}>√x</button>
                 <button onClick={() => handleClick('/')}>÷</button>
                 <button onClick={() => handleClick('7')}>7</button>
                 <button onClick={() => handleClick('8')}>8</button>
