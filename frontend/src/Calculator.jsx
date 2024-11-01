@@ -70,6 +70,11 @@ const Calculator = () => {
     const handleOperator = async (value) => {
         
         if(operators.some(op => expression.includes(op)) || expression.includes('sqrt(') ){
+            if(operators.some(op => expression.endsWith(op))){
+                setExpression(expression.slice(0, -1));
+                setExpression(prev => prev + value) ;
+                return "" ;
+            }
             const res = await myeval() ;
             if( res === 'Error' ){
                 setResult(res) ;
